@@ -14,39 +14,43 @@ import (
 )
 
 // Signup registers a new user and returns a token
-func Signup(user models.User, db *mongo.Database) (string, error) {
+// Signup registers a new user and returns the user and a JWT token
+func Signup(user models.User, db *mongo.Database) (models.User, string, error) {
 	collection := db.Collection("users")
 
-	// Check for duplicate email
+	// Check if the email already exists
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
+
 	var existingUser models.User
 	err := collection.FindOne(ctx, bson.M{"email": user.Email}).Decode(&existingUser)
 	if err == nil {
-		return "", errors.New("email already in use")
+		return models.User{}, "", errors.New("email already in use")
 	}
 
 	// Hash the password
 	hashedPassword, err := utils.HashPassword(user.Password)
 	if err != nil {
-		return "", err
+		return models.User{}, "", err
 	}
 	user.Password = hashedPassword
 
-	// Insert user
-	user.ID = primitive.NewObjectID()
-	_, err = collection.InsertOne(ctx, user)
+	// Insert the user into the database
+	result, err := collection.InsertOne(ctx, user)
 	if err != nil {
-		return "", err
+		return models.User{}, "", err
 	}
 
-	// Generate JWT
+	// Retrieve the inserted user's ID
+	user.ID = result.InsertedID.(primitive.ObjectID)
+
+	// Generate a JWT token for the user
 	token, err := utils.GenerateJWT(user.Email)
 	if err != nil {
-		return "", err
+		return models.User{}, "", err
 	}
 
-	return token, nil
+	return user, token, nil
 }
 
 // Login authenticates a user and returns a token and user data

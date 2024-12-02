@@ -19,12 +19,13 @@ func Signup(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid request body"})
 	}
 
-	token, err := services.Signup(user, db)
+	user, token, err := services.Signup(user, db)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 
-	user.Password = "" // Exclude password in response
+	// Remove password before sending the response
+	user.Password = ""
 	return c.JSON(http.StatusCreated, map[string]interface{}{
 		"user":  user,
 		"token": token,
