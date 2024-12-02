@@ -14,6 +14,7 @@ This repository contains the source code for the Solidithai Assignment 1. It is 
   - [Frontend Setup](#frontend-setup)
 - [Project Structure](#project-structure)
 - [Features](#features)
+- [API Documentation](#api-documentation)
 
 ---
 
@@ -119,3 +120,10 @@ solidithai-assignment-1/
 - Responsive UI.
 - Integration with backend APIs.
 - Modern styling for a clean user experience.
+---
+
+## API Documentation
+
+The API documentation for this project is available at the following link:
+
+[View API Documentation](https://documenter.getpostman.com/view/26586964/2sAYBYgVtq)
