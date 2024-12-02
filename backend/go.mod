@@ -1,4 +1,4 @@
-module github.com/pump-p/solidithai/crud-go/backend
+module github.com/pump-p/solidithai-assignment-1/backend
 
 go 1.22.3
 
